@@ -30,11 +30,7 @@ export default function App() {
       try {
         response = await fetch(`/api/portfolio?action=all&key=${API_KEY}`);
         if (!response.ok) {
-          if (response.status === 404) {
-            isFallback = true;
-          } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
+          isFallback = true;
         }
       } catch (proxyErr) {
         isFallback = true;
@@ -42,7 +38,7 @@ export default function App() {
 
       let result: any;
       if (isFallback) {
-        // Fallback: Fetch directly from Google Apps Script URL (client-side)
+        // Fallback: Fetch langsung dari Google Apps Script URL (client-side)
         const directResponse = await fetch(`${API_URL}?action=all&key=${API_KEY}`, {
           method: "GET",
           headers: {
@@ -50,7 +46,7 @@ export default function App() {
           }
         });
         if (!directResponse.ok) {
-          throw new Error(`Direct connection error! status: ${directResponse.status}`);
+          throw new Error(`Direct connection error! Status: ${directResponse.status}`);
         }
         result = await directResponse.json();
       } else {
@@ -110,22 +106,40 @@ export default function App() {
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white border border-slate-100 rounded-[32px] p-8 max-w-md w-full shadow-xl shadow-slate-200/50 flex flex-col items-center text-center"
+          className="bg-white border border-slate-100 rounded-[32px] p-8 max-w-lg w-full shadow-xl shadow-slate-200/50 flex flex-col items-center"
         >
           <div className="h-14 w-14 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mb-5 border border-red-100/50">
             <AlertCircle className="h-7 w-7" />
           </div>
-          <h3 className="font-display text-lg font-bold text-slate-800 mb-2">Koneksi Gagal</h3>
-          <p className="text-slate-500 text-sm leading-relaxed mb-6">
-            {error}. Mohon pastikan deployment Google Apps Script Anda aktif dan API Key sudah benar.
+          <h3 className="font-display text-xl font-bold text-slate-800 mb-2 text-center">Koneksi Gagal</h3>
+          <p className="text-red-500 text-sm font-semibold mb-4 text-center">
+            {error}
           </p>
-          <button
-            onClick={fetchData}
-            className="flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 transition shadow-md shadow-blue-500/10"
-          >
-            <RefreshCw className="h-4 w-4" />
-            Coba Lagi
-          </button>
+          
+          <div className="w-full text-left bg-slate-50 rounded-2xl p-5 border border-slate-100 text-xs text-slate-600 space-y-3 mb-6">
+            <p className="font-bold text-slate-700 text-sm">Langkah Penyelesaian (Troubleshooting):</p>
+            <ol className="list-decimal list-inside space-y-2">
+              <li>
+                <span className="font-semibold text-slate-800">Cek Akses Web App Google Apps Script:</span> Di editor Apps Script Anda, klik <span className="font-semibold text-slate-800">Deploy &gt; Manage deployments</span>, pastikan pengaturannya diset ke <span className="font-semibold text-blue-600">"Who has access: Anyone"</span> (bukan "Only myself").
+              </li>
+              <li>
+                <span className="font-semibold text-slate-800">Cek API Key Anda:</span> Pastikan API Key <code className="bg-slate-200/60 px-1 py-0.5 rounded font-mono text-[10px]">{API_KEY}</code> sama persis dengan kunci pengaman yang Anda validasi di fungsi <code className="bg-slate-200/60 px-1 py-0.5 rounded font-mono text-[10px]">doGet(e)</code> pada kode Google Apps Script Anda.
+              </li>
+              <li>
+                <span className="font-semibold text-slate-800">Deploy Ulang (Versi Baru):</span> Setiap kali mengubah kode Google Apps Script, Anda wajib membuat deployment versi baru (<span className="font-semibold text-slate-800">Deploy &gt; New deployment</span>) agar perubahannya aktif di web app URL.
+              </li>
+            </ol>
+          </div>
+
+          <div className="flex gap-3 w-full">
+            <button
+              onClick={fetchData}
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-full font-semibold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 transition shadow-md shadow-blue-500/10"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Coba Lagi
+            </button>
+          </div>
         </motion.div>
       </div>
     );
