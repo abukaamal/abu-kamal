@@ -24,11 +24,39 @@ export default function App() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/portfolio?action=all&key=${API_KEY}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      let response: Response | null = null;
+      let isFallback = false;
+
+      try {
+        response = await fetch(`/api/portfolio?action=all&key=${API_KEY}`);
+        if (!response.ok) {
+          if (response.status === 404) {
+            isFallback = true;
+          } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+        }
+      } catch (proxyErr) {
+        isFallback = true;
       }
-      const result = await response.json();
+
+      let result: any;
+      if (isFallback) {
+        // Fallback: Fetch directly from Google Apps Script URL (client-side)
+        const directResponse = await fetch(`${API_URL}?action=all&key=${API_KEY}`, {
+          method: "GET",
+          headers: {
+            "Accept": "application/json",
+          }
+        });
+        if (!directResponse.ok) {
+          throw new Error(`Direct connection error! status: ${directResponse.status}`);
+        }
+        result = await directResponse.json();
+      } else {
+        result = await response!.json();
+      }
+
       if (result && !result.error) {
         setData(result);
       } else {

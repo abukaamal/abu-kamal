@@ -153,19 +153,55 @@ export default function MessageModal({ isOpen, onClose, apiUrl, apiKey }: Messag
         pesan: form.pesan.trim()
       };
 
-      const response = await fetch("/api/message", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
+      let result: any;
+      let isFallback = false;
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      try {
+        const response = await fetch("/api/message", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            isFallback = true;
+          } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+        } else {
+          result = await response.json();
+        }
+      } catch (proxyErr) {
+        isFallback = true;
       }
 
-      const result = await response.json();
+      if (isFallback) {
+        // Fallback: Post directly to Google Apps Script URL using urlencoded parameters (highly compatible)
+        const params = new URLSearchParams();
+        params.append("key", apiKey);
+        params.append("nama", form.nama.trim());
+        params.append("email", form.email.trim());
+        params.append("telpon", cleanPhone);
+        params.append("alamat", form.alamat.trim());
+        params.append("pesan", form.pesan.trim());
+
+        const directResponse = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: params.toString()
+        });
+
+        if (!directResponse.ok) {
+          throw new Error(`Direct connection error! status: ${directResponse.status}`);
+        }
+        result = await directResponse.json();
+      }
+
       clearInterval(interval);
 
       if (result && result.success === true) {
