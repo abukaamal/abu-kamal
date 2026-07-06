@@ -1,0 +1,6 @@
+{
+  "name": "Imat Abu Kamal",
+  "description": "Portofolio profesional interaktif untuk Imat Abu Kamal, dibangun menggunakan React, Vite, Tailwind CSS, dan integrasi Google Sheets.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
