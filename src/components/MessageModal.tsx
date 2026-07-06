@@ -241,7 +241,7 @@ export default function MessageModal({ isOpen, onClose, apiUrl, apiKey }: Messag
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="relative w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl border border-slate-100 flex flex-col max-h-[90vh]"
+            className="relative w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl border border-slate-100 flex flex-col max-h-[85vh] sm:max-h-[90vh] my-auto mx-auto"
           >
             {/* Progress line */}
             {isSubmitting && (
@@ -254,7 +254,7 @@ export default function MessageModal({ isOpen, onClose, apiUrl, apiKey }: Messag
             )}
 
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5 shrink-0 flex-shrink-0">
               <h2 className="font-display text-xl font-bold text-slate-800 flex items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
                   ⚡
@@ -272,7 +272,7 @@ export default function MessageModal({ isOpen, onClose, apiUrl, apiKey }: Messag
             </div>
 
             {/* Body */}
-            <div className="overflow-y-auto px-6 py-4 flex-1">
+            <div className="overflow-y-auto px-6 py-5 flex-1 max-h-[calc(85vh-140px)] sm:max-h-[calc(90vh-140px)]">
               {submitStatus === "success" ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}

@@ -38,13 +38,8 @@ export default function App() {
 
       let result: any;
       if (isFallback) {
-        // Fallback: Fetch langsung dari Google Apps Script URL (client-side)
-        const directResponse = await fetch(`${API_URL}?action=all&key=${API_KEY}`, {
-          method: "GET",
-          headers: {
-            "Accept": "application/json",
-          }
-        });
+        // Fallback: Fetch langsung dari Google Apps Script URL (client-side) tanpa custom headers untuk menghindari preflight CORS
+        const directResponse = await fetch(`${API_URL}?action=all&key=${API_KEY}`);
         if (!directResponse.ok) {
           throw new Error(`Direct connection error! Status: ${directResponse.status}`);
         }
